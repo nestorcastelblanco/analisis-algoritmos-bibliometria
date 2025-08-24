@@ -1,0 +1,26 @@
+[
+  {
+    "source": "sage",
+    "title": "Time to Move Beyond the ASWB Licensing Exams: Can Generative Artificial Intelligence Offer a Way Forward for Social Work?",
+    "doi": "10.1177/10497315231166125",
+    "pii": null,
+    "authors": "Bryan G. Victor; Sheryl Kubiak; Beth Angell; Brian E. Perron",
+    "container_title": "Research on Social Work Practice",
+    "published": "2023",
+    "openaccess": null,
+    "url": "https://journals.sagepub.com/doi/pdf/10.1177/10497315231166125",
+    "abstract": "<jats:p> Social work scholars have long questioned the validity and utility of the Association of Social Work Boards (ASWB) licensing exams. Data released in 2022 revealed severe disparities in pass rates based on race, age, and language, exacerbating these concerns. In this paper, we explore the potential of generative artificial intelligence (AI) such as ChatGPT to address core problems of the ASWB exams, including the use of a multiple-choice format that does not reflect real-world social work practice. To assess its social work reasoning, we used ChatGPT to answer ASWB-developed practice questions for the Bachelors, Masters, and Clinical exams. ChatGPT scored 76%, 80%, and 64%, respectively, and identified additional validity challenges. Based on this performance, we provide a proof-of-concept for how generative AI might move us toward a more valid and equitable exam. While we strongly support licensure requirements, state regulators and legislators should temporarily suspend the use of the ASWB exams for this purpose. </jats:p>"
+  },
+  {
+    "source": "acm",
+    "title": "Generative Artificial Intelligence Policies under the Microscope",
+    "doi": "10.1145/3720536",
+    "pii": null,
+    "authors": "Mahjabin Nahar; Sian Lee; Rebekah Guillen; Dongwon Lee",
+    "container_title": "Communications of the ACM",
+    "published": "2025",
+    "openaccess": null,
+    "url": "https://dl.acm.org/doi/pdf/10.1145/3720536",
+    "abstract": "<jats:p>How computer science conferences are navigating the new frontier in scholarly writing.</jats:p>"
+  }
+]

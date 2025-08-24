@@ -1,11 +1,20 @@
 # etl/run_csv_ingest.py
 from __future__ import annotations
-import argparse, sys, pandas as pd
+
+# --- bootstrap de ruta para importar 'etl.*' aunque el CWD cambie ---
+import sys
+from pathlib import Path
+ROOT = Path(__file__).resolve().parents[1]  # .../analisis-algoritmos-bibliometria
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+# --------------------------------------------------------------------
+
+import argparse
+import pandas as pd
 from sqlalchemy import text, inspect
-from etl.db import get_engine  # ya lo tienes
+from etl.db import get_engine  # requiere etl/db.py existente
 
 def ensure_staging(engine, df: pd.DataFrame, table="staging_papers"):
-    # Crea o agrega (pandas crea la tabla si no existe)
     df.to_sql(table, engine, if_exists="append", index=False, method="multi", chunksize=1000)
     return table
 
@@ -16,23 +25,19 @@ def paper_table_compatible(engine, df_cols) -> tuple[bool, list[str]]:
     cols = {c["name"] for c in insp.get_columns("paper")}
     wanted = ["title","doi","pii","authors","container_title","published","source","url","abstract"]
     use = [c for c in wanted if c in cols]
-    # Necesitamos al menos doi + title para un upsert sensato
     return (("doi" in cols) and (len(use) >= 2)), use
 
 def upsert_into_paper(engine, staging_table, cols):
-    # Inserta solo filas cuyo DOI no exista (si doi NULL, usa título normalizado)
     collist = ", ".join(cols)
     select_cols = ", ".join([f"s.{c}" for c in cols])
     with engine.begin() as conn:
-        # Inserta por DOI no existente
         conn.execute(text(f"""
             INSERT INTO paper ({collist})
             SELECT {select_cols}
             FROM {staging_table} s
             LEFT JOIN paper p ON (p.doi = s.doi AND p.doi IS NOT NULL)
-            WHERE (p.doi IS NULL) 
+            WHERE (p.doi IS NULL)
         """))
-        # Opcional: insertar por título cuando no hay DOI (evita colisiones simples)
         if "title" in cols:
             conn.execute(text(f"""
                 INSERT INTO paper ({collist})
@@ -54,21 +59,18 @@ def main():
 
     engine = get_engine()
     df = pd.read_csv(args.input)
-    # Asegura columnas esperadas aunque falten
+
     for c in ["title","doi","pii","authors","container_title","published","source","url","abstract"]:
         if c not in df.columns:
             df[c] = None
 
-    # Cargar a staging
     staging = ensure_staging(engine, df)
-
-    # Intentar upsert a tabla canónica `paper`
     ok, cols = paper_table_compatible(engine, df.columns)
     if ok:
         upsert_into_paper(engine, staging, cols)
         print(f"[OK] Cargado en {staging} y upsert en paper ({len(cols)} cols).")
     else:
-        print(f"[OK] Cargado en {staging}. No se detectó tabla 'paper' compatible; puedes mergear luego.")
+        print(f"[OK] Cargado en {staging}. No se detecto tabla 'paper' compatible; puedes mergear luego.")
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())
